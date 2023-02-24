@@ -3,7 +3,7 @@
 Cite as: A.N. Colli and J.M. Bisang.
 DOI: 
 
-# electrorefiningnFoam
+# electrorefiningFoam
 It is described how to simulate current distributions in electrochemical reactors under natural convection flows using OpenFOAM. The process of pre-processing, running, and post-processing a basic 2D case using the developed solver electroNaturalConvectionPimpleFoam and codedMixed boundary condition (BC) is demonstrated. The proposed strategy is fully functional in OpenFOAM version 7.
 
 # Disclaimer

@@ -1,0 +1,81 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2012                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     electroNaturalConvectionPimpleFoam;
+
+startFrom       latestTime;//startTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         120;
+
+deltaT          1e-10;
+
+writeControl    adjustableRunTime;//runTime;//timeStep;
+
+writeInterval   10;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression off;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable true;
+
+adjustTimeStep  yes;//no;//
+
+maxCo           0.75;//0.5;
+
+functions
+{
+fieldAverage1
+        {
+            type                    fieldAverage;
+            functionObjectLibs ( "libfieldFunctionObjects.so" );
+            enabled               true;
+	    writeControl          writeTime;	
+	    //windowType   	  exact;
+            //window                0.01;
+            timeStart             0.0;//0.1;
+            periodicRestart       false;//true;
+            //restartPeriod         100;//0.1;
+            //timeEnd               20;
+                
+            fields
+            (
+                rho_i
+                {
+                    mean           on;
+                    prime2Mean     off;
+                    base           time;
+                }
+
+            );
+        }
+
+}
+
+// ************************************************************************* //

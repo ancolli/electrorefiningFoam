@@ -1,0 +1,97 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2012                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      transportProperties;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+transportModel Newtonian;
+
+// Laminar viscosity
+nu              1.42e-6;//47e-06;//m2/s;
+
+// Solutal expansion coefficient
+beta_T            6e-4;//
+
+// Solutal expansion coefficient
+beta_c            -1.006e-4;//m3/mol
+
+// transference number
+t		0.0;	//dimless
+
+// Reference Temperature
+TRef            298;//K
+
+// Reference density
+rho_iRef            740;//mol/m3
+
+// Prandtl number
+Pr	5;
+
+// Turbulent Sc and Pr numbers
+Sct             0.5; //            Sct [ 0 0 0 0 0 0 0 ] 0.5;
+
+Prt		0.7;
+// Difusion coefficient
+
+Dmol         5.158e-10;//Dmol_CuSO4 [0 2 -1 0 0 0 0] 5e-10;//m2/s
+
+// rho*cp
+
+rho_cp		4.5e6;
+
+kf		dimensions [-1 -3 3 0 0 2 0] 50; // S/m == A/V/m == A^2s^3/kg/m^3 
+
+nu_e	2;
+
+nu_ox 	-1;
+
+nu_red	1;
+
+
+bc_SS316 	-0.05;//0.08159;// V
+
+ba_SS316	0.017;//0.03839;// V
+
+j0_SS316 	15;//3.1e-2; // A/m2
+
+
+bc_H2	-0.12;// V
+
+j0_H2	3e-3; // A/m2
+
+E0_H2	-0.34; //  V
+
+
+ba_Ni	0.017;//0.02777;//  V
+
+bc_Ni	-0.05;//0.4351;//  V
+
+j0_Ni	15;//22; //  A/m2
+
+
+ba_O2	0.06;//  V
+
+j0_O2	0.23; //  A/m2
+
+E0_O2	0.89; //  V
+
+
+C_Cuinf	     740; //  mol/m3 kg/m3
+
+
+F	96485; //Cb/mol
+
+ba	0.05; //  V == used when control == 3
+
+// ************************************************************************* //

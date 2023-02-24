@@ -1,0 +1,164 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  6                                     |
+|   \\  /    A nd           | Web:      http://www.OpenFOAM.org               |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      fi;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+#include "include/controlProperties"
+
+dimensions      [1 2 -3 0 0 -1 0];// V = kg*m^2/(A*s^3)
+
+internalField   uniform	#calc "(mag($ref)+$maxPot)/2";
+
+boundaryField
+{
+    "wall_.*"       
+    {
+        type            zeroGradient;
+    }
+    outlet
+    {
+        type            zeroGradient;
+    }
+
+    wall_anode       
+    {
+
+/*   type	fixedGradient;
+    gradient	uniform 7.7519; //j/kappa  */
+
+    type            codedMixed;
+    
+    refValue        uniform #calc "($maxPot-mag($ref))";//$internalField;//
+    refGradient     uniform 0;
+    valueFraction   uniform 1;
+
+    name    anode_fi;   // name of generated BC
+
+    code
+    #{
+        const fvPatch& p = this->patch();                                                                          // Actual boundary/patch
+    	label patchID = p.patch().boundaryMesh().findPatchID("wall_anode");                                       // Desired patch ID
+        const fvMesh& mesh = patch().boundaryMesh().mesh();
+
+        
+        const volScalarField& kf_ = this->db().objectRegistry::template lookupObject<volScalarField>("keff");   // Desired field 1
+        const volScalarField& fi_ = this->db().objectRegistry::template lookupObject<volScalarField>("fi"); // Desired field 2
+        const volScalarField& Con_red = this->db().objectRegistry::template lookupObject<volScalarField>("rho_i");   // Desired field 3
+        //const volScalarField& Con_ox = this->db().objectRegistry::template lookupObject<volScalarField>("C_ox");
+
+        scalarField kf_boundary = kf_.boundaryField()[patchID];                                              
+        scalarField fi_boundary = fi_.boundaryField()[patchID];                                           
+        scalarField C_boundary = Con_red.boundaryField()[patchID];                            
+	//scalarField C_ox_boundary = Con_ox.boundaryField()[patchID]; 
+        
+        scalarField delta = 1.0/mesh.deltaCoeffs().boundaryField()[patchID]; 
+
+        const dictionary& kineticProperties = db().lookupObject<IOdictionary>("transportProperties");
+        const dictionary& Results = db().lookupObject<IOdictionary>("Results");
+        
+        
+        scalar j0 = readScalar(kineticProperties.lookup("j0_Ni")); 
+        scalar ba = readScalar(kineticProperties.lookup("ba_Ni"));
+        scalar bc = readScalar(kineticProperties.lookup("bc_Ni"));
+	scalar j0_O2= readScalar(kineticProperties.lookup("j0_O2"));
+        scalar ba_O2 = readScalar(kineticProperties.lookup("ba_O2"));
+	scalar E0_O2 = readScalar(kineticProperties.lookup("E0_O2"));
+	
+	scalar C_inf = readScalar(kineticProperties.lookup("C_Cuinf")) ;
+
+        scalar Vcell = readScalar(Results.lookup("Vcell"));
+        
+        Info<< "Vcell fi:" << Vcell << endl;
+        
+ 	//const dictionary& controlProperties = db().lookupObject<IOdictionary>("controlProperties");
+	//scalar maxPot = readScalar(controlProperties.lookup("maxPot"));
+	//scalar ref = readScalar(controlProperties.lookup("ref"));
+	//Vcell = max(min(Vcell, maxPot),ref); // limited potentials
+
+        scalarField jota_a = j0*exp((Vcell-fi_boundary)/ba);  //*C_red_boundary/C_Cuinf                  
+        scalarField jota_c = -j0*C_boundary/C_inf*exp((Vcell-fi_boundary)/bc);
+        scalarField jota_secondary = 0.0*j0_O2*exp((Vcell-fi_boundary-E0_O2)/ba_O2);
+        
+	//scalarField jota3 = j0_O2*exp((Vcell-fi_boundary-E0_O2)/ba_O2);
+	scalarField k0 = kf_boundary/delta;
+                                                         
+        scalarField A = (1/k0)*(jota_a/ba+jota_c/bc+jota_secondary/ba_O2);//               
+	scalarField B = (1/k0)*((1+fi_boundary/ba)*jota_a+(1+fi_boundary/bc)*jota_c+(1+fi_boundary/ba_O2)*jota_secondary); //
+         
+        this->refValue() = B/A;
+        this->refGrad() = 0;
+        this->valueFraction() = A/(A+1); 
+    #};
+
+    }
+
+    wall_cathode      
+    {
+
+    type            codedMixed;
+    
+    refValue        uniform #calc "(mag($ref))";//$internalField;//
+    refGradient     uniform 0;
+    valueFraction   uniform 1;
+
+    name    cathode_fi;   // name of generated BC
+
+    code
+    #{
+        const fvPatch& p = this->patch();                                                                          // Actual boundary/patch
+    	label patchID = p.patch().boundaryMesh().findPatchID("wall_cathode");                                       // Desired patch ID
+        const fvMesh& mesh = patch().boundaryMesh().mesh();
+
+        const volScalarField& kf_ = this->db().objectRegistry::template lookupObject<volScalarField>("keff");   // Desired field 1
+        const volScalarField& fi_ = this->db().objectRegistry::template lookupObject<volScalarField>("fi"); // Desired field 2
+        const volScalarField& Con_ox = this->db().objectRegistry::template lookupObject<volScalarField>("rho_i");   // Desired field 3
+        
+        scalarField kf_boundary = kf_.boundaryField()[patchID];                                              
+        scalarField fi_boundary = fi_.boundaryField()[patchID];                                            
+        scalarField C_boundary = Con_ox.boundaryField()[patchID];                                            
+
+        scalarField delta = 1.0/mesh.deltaCoeffs().boundaryField()[patchID]; 
+
+        const dictionary& kineticProperties = db().lookupObject<IOdictionary>("transportProperties");
+  
+        scalar j0 = readScalar(kineticProperties.lookup("j0_SS316"));
+        scalar bc = readScalar(kineticProperties.lookup("bc_SS316"));
+	scalar ba = readScalar(kineticProperties.lookup("ba_SS316"));
+        scalar j0_H2 = readScalar(kineticProperties.lookup("j0_H2"));
+        scalar bc_H2 = readScalar(kineticProperties.lookup("bc_H2"));
+        scalar E0_H2 = readScalar(kineticProperties.lookup("E0_H2"));
+	
+	scalar C_inf = readScalar(kineticProperties.lookup("C_Cuinf"));
+ 
+        scalarField jota_a = j0*exp((-fi_boundary)/ba);  //*C_red_boundary/C_Cuinf                  
+        scalarField jota_c = -j0*C_boundary/C_inf*exp((-fi_boundary)/bc);
+	scalarField jota_secondary = -j0_H2*exp((-fi_boundary-E0_H2)/bc_H2);
+	
+	scalarField k0 = kf_boundary/delta;
+                                                         
+        scalarField A = (1/k0)*(jota_a/ba+jota_c/bc+jota_secondary/bc_H2);              
+	scalarField B = (1/k0)*((1+fi_boundary/ba)*jota_a+(1+fi_boundary/bc)*jota_c+(1+fi_boundary/bc_H2)*jota_secondary);
+        
+	this->refValue() = B/A;
+        this->refGrad() = 0;
+        this->valueFraction() = A/(A+1); 
+    #};
+    }  
+ 
+    frontAndBack
+    {
+        type            empty;   
+    }  
+}
+
+// ************************************************************************* //

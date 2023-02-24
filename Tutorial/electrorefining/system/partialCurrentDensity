@@ -1,0 +1,50 @@
+//*--------------------------------*- C++ -*----------------------------------*\
+//| =========                 |                                                 |
+//| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+//|  \\    /   O peration     | Version:  5                                     |
+//|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+//|    \\/     M anipulation  |                                                 |
+//\*---------------------------------------------------------------------------*/
+ 
+partialCurrentDensity
+{
+        type        wallFlux;//
+        libs        ("libwallFluxFunctionObject.so");//
+	patches     ("wall_cathode" "wall_anode");
+
+	//fields		("T" "DT");
+	
+        //...
+        //region      fluid;
+        //patches     (".*Wall");
+	//scalarData     1.0;
+        //labelData      1;
+
+}
+
+
+/*
+surfaces
+    {
+        type           wallHeatFlux;// 
+        libs ("libfieldFunctionObject.so");//("libnameFunctionObject.so");
+	//patches     (".*wall_catodo");
+        //...
+        // wordData       "T";
+        //scalarData     1.0;
+        //labelData      1;
+    }  
+
+
+
+
+{
+	type           wallFlux;
+        libs ("libwallFluxFunctionObject.so" "libfieldFunctionObject.so");
+        //...
+        //region      fluid;
+        patches     (".*wall_catodo");*/
+        
+   } */
+
+

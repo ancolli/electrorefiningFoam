@@ -1,0 +1,12 @@
+#!/bin/sh
+cd "${0%/*}" || exit                                # Run from this directory
+. ${WM_PROJECT_DIR:?}/bin/tools/CleanFunctions      # Tutorial clean functions
+#------------------------------------------------------------------------------
+rm 0/include/controlProperties
+rm 0/include/transportProperties
+
+cleanCase
+rm -f 0/rho_i
+rm -f 0/T
+
+#------------------------------------------------------------------------------

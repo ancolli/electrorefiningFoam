@@ -1,0 +1,143 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2012                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      rho_i;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "include/transportProperties"
+
+dimensions      [0 -3 0 0 1 0 0];
+
+internalField   uniform $C_Cuinf;
+
+boundaryField
+{
+
+    "wall_.*"       
+    {
+        type            zeroGradient;
+    }
+    
+    outlet
+    {
+        type            zeroGradient;
+    }
+    
+    wall_anode       
+    {
+    type            codedMixed;
+    
+    refValue        $internalField;
+    refGradient     uniform 0;
+    valueFraction   uniform 1;
+
+    name    anodeC_Cu;   // name of generated BC
+
+    code
+    #{
+        const fvPatch& p = this->patch();                                                                          
+    	label patchID = p.patch().boundaryMesh().findPatchID("wall_anode");  
+    	const fvMesh& mesh = patch().boundaryMesh().mesh();
+    	   
+        const volScalarField& fi_ = this->db().objectRegistry::template lookupObject<volScalarField>("fi"); 
+	
+        scalarField delta = 1.0/mesh.deltaCoeffs().boundaryField()[patchID];                                  
+        scalarField fi_boundary = fi_.boundaryField()[patchID];                        
+    	
+    	const dictionary& kineticProperties = db().lookupObject<IOdictionary>("transportProperties"); 
+    	const dictionary& Results = db().lookupObject<IOdictionary>("Results");
+    	scalar nu_e = readScalar(kineticProperties.lookup("nu_e"));	
+    	 	
+    	scalar Vcell = readScalar(Results.lookup("Vcell"));//    	
+    	//Info<< "Vcell rho_i:" << Vcell << endl;
+    	
+    	scalar D_Cu = readScalar(kineticProperties.lookup("Dmol"));
+	
+        scalar F = readScalar(kineticProperties.lookup("F"));    
+        
+        scalar j0 = readScalar(kineticProperties.lookup("j0_Ni"));
+        scalar bc = readScalar(kineticProperties.lookup("bc_Ni"));
+	scalar ba = readScalar(kineticProperties.lookup("ba_Ni"));
+        scalar C_inf = readScalar(kineticProperties.lookup("C_Cuinf"));  
+        
+        scalar t = readScalar(kineticProperties.lookup("t"));
+        
+        scalarField jota_c = -j0*exp((Vcell-fi_boundary)/bc);                                     
+        scalarField jota_a = j0*exp((Vcell-fi_boundary)/ba);                                          
+
+	scalarField k0 = D_Cu/delta;                                                               
+        
+	scalarField a = -(1-t)/nu_e*jota_c/C_inf/F/k0;        
+	scalarField b = (1-t)/nu_e*jota_a/F/k0;//nu_ox/nu_e*jota_nok/F/k0;                                          
+	                  
+        this->refValue() = b/a;
+        this->refGrad() = 0;
+        this->valueFraction() = a/(1+a);
+    #};
+    }
+
+    wall_cathode      
+    {
+    type            codedMixed;
+    
+    refValue        $internalField;
+    refGradient     uniform 0;
+    valueFraction   uniform 1;
+
+    name    cathodeC_Cu;   // name of generated BC
+
+    code
+    #{
+        const fvPatch& p = this->patch();                                                                          
+    	label patchID = p.patch().boundaryMesh().findPatchID("wall_cathode");                                       
+        const fvMesh& mesh = patch().boundaryMesh().mesh();
+	  
+        const volScalarField& fi_ = this->db().objectRegistry::template lookupObject<volScalarField>("fi"); 
+                                
+        scalarField fi_boundary = fi_.boundaryField()[patchID]; 
+	
+        scalarField delta = 1.0/mesh.deltaCoeffs().boundaryField()[patchID]; 
+
+        const dictionary& kineticProperties = db().lookupObject<IOdictionary>("transportProperties");
+
+	scalar nu_e = readScalar(kineticProperties.lookup("nu_e"));
+        
+        scalar j0 = readScalar(kineticProperties.lookup("j0_SS316"));
+        scalar bc = readScalar(kineticProperties.lookup("bc_SS316"));
+	scalar ba= readScalar(kineticProperties.lookup("ba_SS316"));
+        scalar C_inf = readScalar(kineticProperties.lookup("C_Cuinf"));
+        
+        scalar D_Cu = readScalar(kineticProperties.lookup("Dmol"));	
+        scalar F = readScalar(kineticProperties.lookup("F"));
+        scalar t = readScalar(kineticProperties.lookup("t"));
+ 
+        scalarField jota_c = -j0*exp(-fi_boundary/bc);                                     
+        scalarField jota_a = j0*exp(-fi_boundary/ba);
+	scalarField k0 = D_Cu/delta;                                                               
+        
+	scalarField a = -(1-t)/nu_e*jota_c/C_inf/F/k0;        
+	scalarField b = (1-t)/nu_e*jota_a/F/k0;                                        
+	                  
+        this->refValue() = b/a;
+        this->refGrad() = 0;
+        this->valueFraction() = a/(1+a);
+    #};
+ 
+    }
+
+    frontAndBack
+    {
+        type            empty;   
+    }   
+
+// ************************************************************************* //

@@ -26,6 +26,79 @@ boundaryField
         type            zeroGradient;
     }
     
+    wall_cathode      
+    {
+    	//type 		fixedGradient;
+	//gradient 	uniform  10;
+    type            codedMixed;
+    
+    refValue        $internalField;//
+    refGradient     uniform 0;
+    valueFraction   uniform 1;
+
+    name    cathode_T;   // name of generated BC
+
+    code
+    #{
+        const fvPatch& p = this->patch();                                                                          // Actual boundary/patch
+    	label patchID = p.patch().boundaryMesh().findPatchID("wall_anode");                                       // Desired patch ID
+        const fvMesh& mesh = patch().boundaryMesh().mesh();
+     
+        const volScalarField& kf_ = this->db().objectRegistry::template lookupObject<volScalarField>("keff");   // Desired field 1
+        const volScalarField& fi_ = this->db().objectRegistry::template lookupObject<volScalarField>("fi"); // Desired field 2
+
+        scalarField kf_boundary = kf_.boundaryField()[patchID];                                              
+        scalarField fi_boundary = fi_.boundaryField()[patchID];       
+        scalarField grad_fi = fi_.boundaryField()[patchID].snGrad();                                     
+
+        scalarField gradiente = -kf_boundary/0.5*grad_fi*(0-fi_boundary); 
+        //Info<< "gradiente:" << gradiente << endl;
+        
+        this->refValue() = 0;//B/A;
+        this->refGrad() = gradiente;
+        this->valueFraction() = 0;//A/(A+1); 
+    #};
+	
+    }
+    
+    wall_anode      
+    {
+    	//type 		fixedGradient;
+	//gradient 	uniform  10;
+    type            codedMixed;
+    
+    refValue        $internalField;//
+    refGradient     uniform 0;
+    valueFraction   uniform 1;
+
+    name    anode_T;   // name of generated BC
+
+    code
+    #{
+        const fvPatch& p = this->patch();                                                                          // Actual boundary/patch
+    	label patchID = p.patch().boundaryMesh().findPatchID("wall_anode");                                       // Desired patch ID
+        const fvMesh& mesh = patch().boundaryMesh().mesh();
+     
+        const volScalarField& kf_ = this->db().objectRegistry::template lookupObject<volScalarField>("keff");   // Desired field 1
+        const volScalarField& fi_ = this->db().objectRegistry::template lookupObject<volScalarField>("fi"); // Desired field 2
+
+        scalarField kf_boundary = kf_.boundaryField()[patchID];                                              
+        scalarField fi_boundary = fi_.boundaryField()[patchID];       
+        scalarField grad_fi = fi_.boundaryField()[patchID].snGrad();    
+        
+        const dictionary& Results = db().lookupObject<IOdictionary>("Results");
+        scalar Vcell = readScalar(Results.lookup("Vcell"));//                                 
+
+        scalarField gradiente = kf_boundary/0.5*grad_fi*(Vcell-fi_boundary); 
+        //Info<< "gradiente:" << gradiente << endl;
+        
+        this->refValue() = 0;//B/A;
+        this->refGrad() = gradiente;
+        this->valueFraction() = 0;//A/(A+1); 
+    #};
+	
+    }
+    
     outlet
     {
         type            zeroGradient;

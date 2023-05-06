@@ -36,7 +36,7 @@ TRef            298.15;//K
 rho_iRef            740;//mol/m3
 
 // Prandtl number
-Pr	4.2;
+Pr	10.9;
 
 // Turbulent Sc and Pr numbers
 Sct             0.5; //            Sct [ 0 0 0 0 0 0 0 ] 0.5;
@@ -48,7 +48,7 @@ Dmol         5.158e-10;//Dmol_CuSO4 [0 2 -1 0 0 0 0] 5e-10;//m2/s
 
 // rho*cp
 
-rho_cp		1.54e6;
+rho_cp		3.84e6;
 
 kf		dimensions [-1 -3 3 0 0 2 0] 50; // S/m == A/V/m == A^2s^3/kg/m^3 
 

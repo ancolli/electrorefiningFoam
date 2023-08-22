@@ -1,6 +1,6 @@
 # v1.0.0
 
-Cite as: A.N. Colli and J.M. Bisang.
+Cite as: A.N. Colli and J.M. Bisang. Exploring the Impact of Concentration and Temperature Variations on Transient Natural Convection in Metal Electrodeposition: A Finite Volume Method Analysis. J. Electrochem. Soc. 170 (2023) 083505
 DOI: 
 
 # electrorefiningFoam

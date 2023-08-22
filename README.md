@@ -1,7 +1,8 @@
 # v1.0.0
 
 Cite as: A.N. Colli and J.M. Bisang. Exploring the Impact of Concentration and Temperature Variations on Transient Natural Convection in Metal Electrodeposition: A Finite Volume Method Analysis. J. Electrochem. Soc. 170 (2023) 083505
-DOI: 
+
+DOI: https://doi.org/10.1149/1945-7111/acef62
 
 # electrorefiningFoam
 It is described how to simulate current distributions in electrochemical reactors under natural convection flows using OpenFOAM. The process of pre-processing, running, and post-processing a basic 2D case using the developed solver electroNaturalConvectionPimpleFoam and codedMixed boundary condition (BC) is demonstrated. The proposed strategy is fully functional in OpenFOAM version 7.

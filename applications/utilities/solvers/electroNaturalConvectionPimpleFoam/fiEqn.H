@@ -44,7 +44,7 @@ if (patchOK==1)  // checks if "wall_anode" is in the current patchName
 
 	scalar Vcell = readScalar(Results.lookup("Vcell"));
 
-	do {  // permite cumplir con modo galvanostatico luego de cada timeStep (adaptar a potenciostatico)
+	do {  // permite cumplir con modo galvanostatico o potenciostatico luego de cada timeStep
 		
 // Calculates flux on the anode and cathode
         label patchi_A = mesh.boundaryMesh().findPatchID("wall_anode"); 

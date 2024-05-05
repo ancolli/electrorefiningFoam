@@ -91,20 +91,6 @@ Foam::functionObjects::wallFlux::wallFlux
 
     writeFile(obr_, name, typeName, dict),
     patchSet_()
- 
-   /* C_red_
-    (
-       IOobject
-       (
-          "rho_iMean",
-           mesh_.time().timeName(),
-           mesh_,
-           IOobject::MUST_READ,
-           IOobject::NO_WRITE
-       ),
-       mesh_
-      
-    )*/
       
 {
     volScalarField* wallFluxPtr

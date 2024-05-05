@@ -105,18 +105,10 @@ private:
 
 //Private data
 
- //- Run-time selectable finite volume options, e.g. sources, constraints
-        //fv::optionList fvOptions_;
-
 	scalar nu_e_;
 	scalar F_;
 	scalar Dmol_;
 	scalar t_;
-	
-        //volScalarField C_red_;
-
-
-
 	
 // Private Member Functions
 

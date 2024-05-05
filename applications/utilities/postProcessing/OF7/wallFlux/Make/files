@@ -1,0 +1,3 @@
+wallFlux.C
+
+LIB = $(FOAM_USER_LIBBIN)/libwallFluxFunctionObject

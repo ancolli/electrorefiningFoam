@@ -5,10 +5,10 @@ Cite as: A.N. Colli and J.M. Bisang. Exploring the Impact of Concentration and T
 DOI: https://doi.org/10.1149/1945-7111/acef62
 
 # electrorefiningFoam
-It is described how to simulate current distributions in electrochemical reactors under natural convection flows using OpenFOAM. The process of pre-processing, running, and post-processing a basic 2D case using the developed solver electroNaturalConvectionPimpleFoam and codedMixed boundary condition (BC) is demonstrated. The proposed strategy is fully functional in OpenFOAM version 7.
+It is described how to simulate current distributions in electrochemical reactors under natural convection flows using OpenFOAM. The process of pre-processing, running, and post-processing a basic 2D case using the developed solver electroNaturalConvectionPimpleFoam and codedMixed boundary condition (BC) is demonstrated. The proposed strategy is fully functional in OpenFOAM version 7 and OpenFOAM 2312.
 
 # Disclaimer
-This offering is not approved or endorsed by OpeFOAM Foundation, producer and distributor of the OpenFOAM software via www.openfoam.org.
+This offering is not approved or endorsed by ESI® Group, ESI-OpenCFD® or the OpenFOAM® Foundation, the producer of the OpenFOAM® software and owner of the OpenFOAM® trademark.
 
 # Usage
 In applications (A) you will find the scripts to compile the solver and post-processing utilities in order to solve current distribution in natural convection systems.

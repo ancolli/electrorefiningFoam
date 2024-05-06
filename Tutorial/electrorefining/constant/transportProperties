@@ -50,7 +50,7 @@ Dmol         5.158e-10;//Dmol_CuSO4 [0 2 -1 0 0 0 0] 5e-10;//m2/s
 
 rho_cp		3.84e6;
 
-kf		dimensions [-1 -3 3 0 0 2 0] 50; // S/m == A/V/m == A^2s^3/kg/m^3 
+kf		50; //dimensions [-1 -3 3 0 0 2 0] 50; // S/m == A/V/m == A^2s^3/kg/m^3 
 
 nu_e	2;
 

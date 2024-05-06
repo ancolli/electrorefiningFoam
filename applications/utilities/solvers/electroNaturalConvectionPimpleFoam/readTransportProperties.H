@@ -36,3 +36,9 @@ dimensionedScalar Sct("Sct", dimless, laminarTransport);
 
 // Turbulent Pr number
 dimensionedScalar Prt("Prt", dimless, laminarTransport);
+
+// Electrical condictivity of the fluid
+dimensionedScalar kf("kf", dimensionSet(-1,-3,3,0,0,2,0), laminarTransport); //S/m == A/V/m == A^2s^3/kg/m^3
+
+
+

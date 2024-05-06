@@ -193,12 +193,8 @@ IOdictionary transportProperties
     )
 );
 
-Info<< "Reading electric conductivity kf\n" << endl;
-    
-dimensionedScalar kf
-(
-    transportProperties.lookup("kf")
-);
+   
+
 
     volScalarField keff
     (

@@ -41,7 +41,7 @@ boundaryField
     code
     #{
         const fvPatch& p = this->patch();                                                                          // Actual boundary/patch
-    	label patchID = p.patch().boundaryMesh().findPatchID("wall_anode");                                       // Desired patch ID
+    	label patchID = p.patch().boundaryMesh().findPatchID("wall_cathode");                                       // Desired patch ID
         const fvMesh& mesh = patch().boundaryMesh().mesh();
      
         const volScalarField& kf_ = this->db().objectRegistry::template lookupObject<volScalarField>("keff");   // Desired field 1
